@@ -37,7 +37,12 @@ Parameters: str
 Returns: str
 '''
 def parseName(fromString):
-    return
+    start = fromString.find("From: ") + len("From: ")
+    line = fromString[start:]
+    end = line.find(" (")
+    line = line[:end]
+    line = line.strip()
+    return line
 
 
 '''
@@ -47,7 +52,12 @@ Parameters: str
 Returns: str
 '''
 def parsePosition(fromString):
-    return
+    start = fromString.find(" (") + len(" (")
+    line = fromString[start:]
+    end = line.find("from")
+    line = line[:end]
+    line = line.strip()
+    return line
 
 
 '''
@@ -57,7 +67,12 @@ Parameters: str
 Returns: str
 '''
 def parseState(fromString):
-    return
+    start = fromString.find(" from") + len(" from")
+    line = fromString[start:]
+    end = line.find(")")
+    line = line[:end]
+    line = line.strip()
+    return line
 
 
 '''
