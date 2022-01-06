@@ -128,7 +128,7 @@ Parameters: dataframe ; str
 Returns: str
 '''
 def getRegionFromState(stateDf, state):
-    return
+    return(stateDf.loc[stateDf['state'] == state, 'region'].iloc[0])
 
 
 '''
