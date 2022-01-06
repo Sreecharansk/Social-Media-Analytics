@@ -194,6 +194,12 @@ Returns: None
 '''
 def addSentimentColumn(data):
     classifier = SentimentIntensityAnalyzer()
+    sentiment=[]
+    for i in range(len(data)):
+        st=data['text'][i]
+        A=findSentiment(classifier, st)
+        sentiment.append(A)      
+    data['sentiment'] = sentiment
     return
     
         
