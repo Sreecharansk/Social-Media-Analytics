@@ -4,6 +4,7 @@ Name:
 Roll Number:
 """
 
+from os import listdir
 import hw6_social_tests as test
 
 project = "Social" # don't edit this
@@ -212,8 +213,59 @@ Parameters: dataframe ; str ; str
 Returns: dict mapping strs to ints
 '''
 def getDataCountByState(data, colName, dataToCount):
-    return
-
+    st1=[]
+    st2=[]
+    dtc=[]
+    dd=[]
+    if colName!="" and dataToCount!="":
+        for i in range(len(data)):
+            st=data['state'][i]
+            st1.append(st)
+            dt=data[colName][i]
+            dtc.append(dt)
+            if st not in st2:
+                st2.append(st) #all unique names of states
+        for i in range(len(st2)):
+            A=st2[i]
+            count=0
+            for j in range(len(st1)):
+                if A==st1[j]:
+                    if dtc[j]==dataToCount:
+                        count=count+1
+            dd.append(count)            
+        sta=[]
+        cnt=[]
+        for i in range(len(dd)):
+            if dd[i]!=0:
+                sta.append(st2[i])
+                cnt.append(dd[i])
+        dic = {}
+        for i in range(0,len(sta)):
+            dic[sta[i]] = cnt[i]
+        return dic
+    else:
+        for i in range(len(data)):
+            st=data['state'][i]
+            st1.append(st)
+            if st not in st2:
+                st2.append(st) #all unique names of states
+        for i in range(len(st2)):
+            A=st2[i]
+            count=0
+            for j in range(len(st1)):
+                if A==st1[j]:
+                    count=count+1
+            dd.append(count)
+        sta=[]
+        cnt=[]
+        for i in range(len(dd)):
+            if dd[i]!=0:
+                sta.append(st2[i])
+                cnt.append(dd[i])
+        dic = {}
+        for i in range(0,len(sta)):
+            dic[sta[i]] = cnt[i]
+        return dic
 
 '''
 getDataForRegion(data, colName)
