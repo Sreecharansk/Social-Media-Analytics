@@ -315,6 +315,7 @@ Parameters: dataframe
 Returns: dict mapping strs to ints
 '''
 def getHashtagRates(data):
+    
     return
 
 
