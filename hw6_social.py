@@ -308,7 +308,15 @@ Parameters: dict mapping strs to ints ; int
 Returns: dict mapping strs to ints
 '''
 def mostCommonHashtags(hashtags, count):
-    return
+    dic={}
+    A = list(hashtags.keys())
+    B = list(hashtags.values())
+    for i in range(count):
+        A1=max(B)
+        index = B.index(A1)
+        dic[A[index]]=A1
+        B[index]=0
+    return dic
 
 
 '''
