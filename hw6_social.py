@@ -82,44 +82,20 @@ Parameters: str
 Returns: list of strs
 '''
 def findHashtags(message):
-    ind = []
-    lst = [ ]
-    for i in range(len(message)):
-        if message[i] == "#":
-            ind.append(i)
-    sls = []
-    prt=[]
-    for j in range(97, 123):
-        sls.append(chr(j))
-    for j in range(48, 58):
-        sls.append(chr(j))
-    for j in range(65, 90):
-        sls.append(chr(j))
-    sls.append("#")
-    for j in range(len(ind)):
-        line = message[ind[j]:]
-        end = line.find(" ")
-        line = line[:end]
-        a = len(line)
-        if end == -1:
-            line = message[ind[j]:]
-        for i in range(len(line)):
-            if line[i] not in sls:
-                line=line[0:i]
+    tags=message.split("#")
+    K=[' ', '\n', '#', '.', ',', '?', '!', ':', ';', ')']
+    val=""
+    list=[]
+    for i in tags[1:]:
+        for j in i:
+            if j not in K:
+                val=val+j
+            else:
                 break
-        count = 0
-        for i in line:
-            if i == "#":
-                count = count + 1
-        if count > 1:
-            line = message[ind[j] + 1:]
-            end1 = line.find("#")
-            line = "#" + line[:end1]
-            count=0
-
-        lst.append(str(line))
-    return lst
-
+        list.append('#'+val)
+        val=""
+    return list
+    
 
 '''
 getRegionFromState(stateDf, state)
