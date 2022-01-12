@@ -326,7 +326,27 @@ Parameters: dataframe ; str
 Returns: float
 '''
 def getHashtagSentiment(data, hashtag):
-    return
+    htgs=[]
+    senti=[]
+    ind=[]
+    for i in range(len(data)):
+        a=data['hashtags'][i]
+        htgs.append(a)
+        b=data['sentiment'][i]
+        senti.append(b)
+    count=0
+    for i in range(len(htgs)):
+        if hashtag in htgs[i]:
+            ind.append(i)
+    for i in range(len(ind)):
+        A=senti[ind[i]]
+        if A=="positive":
+            count=count+1
+        if A=="negative":
+            count=count-1
+        if A=="neutral":
+            count=count+0                
+    return (count/len(ind))
 
 
 ### PART 3 ###
