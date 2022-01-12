@@ -274,7 +274,38 @@ Parameters: dataframe ; str
 Returns: dict mapping strs to (dicts mapping strs to ints)
 '''
 def getDataForRegion(data, colName):
-    return
+    reg=[]
+    cln1=[]
+    cln2=[]
+    reg2=[]
+    d1={}
+    for i in range(len(data)):
+            re=data['region'][i]
+            reg.append(re)
+            if re not in reg2:
+                reg2.append(re) #all unique names of regions           
+            cln=data[colName][i]
+            cln1.append(cln)
+            if cln not in cln2:
+                cln2.append(cln) #all unique names of colname attributes
+    for i in range(len(reg2)):
+        d1[reg2[i]]={}
+        for j in range(len(cln2)):
+            d1[reg2[i]][cln2[j]]=0
+    
+    for i in range(len(reg2)):
+        A=reg2[i]
+        for j in range(len(cln2)):
+            B=cln2[j]
+            count=0
+            for k in range(len(data)):
+                C=data['region'][k]
+                D=data[colName][k]
+                if A==C and B==D:
+                    count=count+1
+            d1[A][B] = count
+       
+    return d1
 
 
 '''
