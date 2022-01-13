@@ -172,7 +172,7 @@ def testGetHashtagRates(df):
     print("... done!")
 
 def testMostCommonHashtags(df):
-    print("Testing mostCommonHashtags()...", end="")
+    print("Teconsting mostCommonHashtags()...", end="")
     d1 = { "#CMU" : 10, "#TheMandalorian" : 15, "#tgif" : 3, "#homework" : 20, "#hashtag" : 1, "#programming" : 7, "#testcase" : 1, "#WorldPeace" : 9, "#coffee" : 18, "#naptime" : 2 }
     assert(mostCommonHashtags(d1, 1) == { "#homework" : 20 })
     assert(mostCommonHashtags(d1, 2) == { "#homework" : 20, "#coffee" : 18 })
