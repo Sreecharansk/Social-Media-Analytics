@@ -378,6 +378,25 @@ Parameters: dict mapping strs to ints ; dict mapping strs to ints ; int ; str
 Returns: None
 '''
 def graphTopNStates(stateCounts, stateFeatureCounts, n, title):
+    B = list(stateFeatureCounts.keys())
+    dict={}
+    for i in range(len(B)):
+        dict[B[i]]= stateFeatureCounts[B[i]]/stateCounts[B[i]]
+    dic={}    
+    A = list(dict.keys())
+    B = list(dict.values())
+    for i in range(n):
+        A1=max(B)
+        index = B.index(A1)
+        dic[A[index]]=A1
+        B[index]=0
+    plt.bar(list(dic.keys()),list(dic.values()))
+    plt.title(title)
+    plt.xlabel('State')
+    plt.ylabel('Feature Rate')
+    plt.xticks(rotation = 90)
+    plt.show()
+   
     return
 
 
