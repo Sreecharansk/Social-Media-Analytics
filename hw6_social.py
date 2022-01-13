@@ -407,6 +407,32 @@ Parameters: dict mapping strs to (dicts mapping strs to ints) ; str
 Returns: None
 '''
 def graphRegionComparison(regionDicts, title):
+    A = list(regionDicts.keys())
+    B = list(regionDicts.values())
+    D=list(B[0].keys()) ## x labels 
+    South=list(B[0].values())
+    West=list(B[1].values())
+    Midwest=list(B[2].values())
+    Northeast=list(B[3].values())
+    w=0.2
+    bar1=[]
+    for i in range(len(D)):
+        bar1.append(i)
+    bar2=[i+w for i in bar1]
+    bar3=[i+w for i in bar2]
+    bar4=[i+w for i in bar3]
+
+    plt.bar(bar1,South,w,label="South")
+    plt.bar(bar2,West,w,label="West")
+    plt.bar(bar3,Midwest,w,label="Mid West")
+    plt.bar(bar4,Northeast,w,label="North East")
+
+    plt.xlabel("Feature")
+    plt.ylabel("value")
+    plt.title(title)
+    plt.xticks(bar3,D)
+    plt.legend()
+    plt.show()
     return
 
 
