@@ -25,7 +25,9 @@ Parameters: str
 Returns: dataframe
 '''
 def makeDataFrame(filename):
-    return
+    #filename=filename.csv
+    file_df = pd.read_csv(filename)
+    return file_df
 
 
 '''
@@ -35,7 +37,12 @@ Parameters: str
 Returns: str
 '''
 def parseName(fromString):
-    return
+    start = fromString.find("From: ") + len("From: ")
+    line = fromString[start:]
+    end = line.find(" (")
+    line = line[:end]
+    line = line.strip()
+    return line
 
 
 '''
@@ -45,7 +52,12 @@ Parameters: str
 Returns: str
 '''
 def parsePosition(fromString):
-    return
+    start = fromString.find(" (") + len(" (")
+    line = fromString[start:]
+    end = line.find("from")
+    line = line[:end]
+    line = line.strip()
+    return line
 
 
 '''
@@ -55,7 +67,12 @@ Parameters: str
 Returns: str
 '''
 def parseState(fromString):
-    return
+    start = fromString.find(" from") + len(" from")
+    line = fromString[start:]
+    end = line.find(")")
+    line = line[:end]
+    line = line.strip()
+    return line
 
 
 '''
@@ -65,7 +82,43 @@ Parameters: str
 Returns: list of strs
 '''
 def findHashtags(message):
-    return
+    ind = []
+    lst = [ ]
+    for i in range(len(message)):
+        if message[i] == "#":
+            ind.append(i)
+    sls = []
+    prt=[]
+    for j in range(97, 123):
+        sls.append(chr(j))
+    for j in range(48, 58):
+        sls.append(chr(j))
+    for j in range(65, 90):
+        sls.append(chr(j))
+    sls.append("#")
+    for j in range(len(ind)):
+        line = message[ind[j]:]
+        end = line.find(" ")
+        line = line[:end]
+        a = len(line)
+        if end == -1:
+            line = message[ind[j]:]
+        for i in range(len(line)):
+            if line[i] not in sls:
+                line=line[0:i]
+                break
+        count = 0
+        for i in line:
+            if i == "#":
+                count = count + 1
+        if count > 1:
+            line = message[ind[j] + 1:]
+            end1 = line.find("#")
+            line = "#" + line[:end1]
+            count=0
+
+        lst.append(str(line))
+    return lst
 
 
 '''
@@ -75,7 +128,7 @@ Parameters: dataframe ; str
 Returns: str
 '''
 def getRegionFromState(stateDf, state):
-    return
+    return(stateDf.loc[stateDf['state'] == state, 'region'].iloc[0])
 
 
 '''
@@ -85,6 +138,32 @@ Parameters: dataframe ; dataframe
 Returns: None
 '''
 def addColumns(data, stateDf):
+    name=[]
+    position=[]
+    state=[]
+    hashtags=[]
+    region=[]
+    for i in range(len(data)):
+        st=data['label'][i]
+        A=parseName(st)
+        name.append(A)
+        B=parsePosition(st)
+        position.append(B)
+        C=parseState(st)
+        state.append(C)
+        st1=data['text'][i]
+        D=findHashtags(st1)
+        hashtags.append(D)
+
+    for i in range(len(state)):
+        E=getRegionFromState(stateDf,state[i])
+        region.append(E)
+
+    data['name']=name
+    data['position']=position
+    data['state']=state
+    data['region']=region
+    data['hashtags']=hashtags
     return
 
 
@@ -98,7 +177,13 @@ Returns: str
 '''
 def findSentiment(classifier, message):
     score = classifier.polarity_scores(message)['compound']
-    return
+    if score < -0.1:
+        return "negative"
+    elif score > 0.1:
+        return "positive"
+    else:
+        return "neutral"
+    
 
 
 '''
@@ -110,6 +195,8 @@ Returns: None
 def addSentimentColumn(data):
     classifier = SentimentIntensityAnalyzer()
     return
+    
+        
 
 
 '''
@@ -268,10 +355,10 @@ if __name__ == "__main__":
     test.runWeek1()
 
     ## Uncomment these for Week 2 ##
-    """print("\n" + "#"*15 + " WEEK 2 TESTS " +  "#" * 16 + "\n")
+    print("\n" + "#"*15 + " WEEK 2 TESTS " +  "#" * 16 + "\n")
     test.week2Tests()
     print("\n" + "#"*15 + " WEEK 2 OUTPUT " + "#" * 15 + "\n")
-    test.runWeek2()"""
+    test.runWeek2()
 
     ## Uncomment these for Week 3 ##
     """print("\n" + "#"*15 + " WEEK 3 OUTPUT " + "#" * 15 + "\n")
