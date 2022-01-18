@@ -4,6 +4,7 @@ Name:
 Roll Number:
 """
 
+from os import listdir
 import hw6_social_tests as test
 
 project = "Social" # don't edit this
@@ -25,7 +26,9 @@ Parameters: str
 Returns: dataframe
 '''
 def makeDataFrame(filename):
-    return
+    #filename=filename.csv
+    file_df = pd.read_csv(filename)
+    return file_df
 
 
 '''
@@ -35,7 +38,12 @@ Parameters: str
 Returns: str
 '''
 def parseName(fromString):
-    return
+    start = fromString.find("From: ") + len("From: ")
+    line = fromString[start:]
+    end = line.find(" (")
+    line = line[:end]
+    line = line.strip()
+    return line
 
 
 '''
@@ -45,7 +53,12 @@ Parameters: str
 Returns: str
 '''
 def parsePosition(fromString):
-    return
+    start = fromString.find(" (") + len(" (")
+    line = fromString[start:]
+    end = line.find("from")
+    line = line[:end]
+    line = line.strip()
+    return line
 
 
 '''
@@ -55,7 +68,12 @@ Parameters: str
 Returns: str
 '''
 def parseState(fromString):
-    return
+    start = fromString.find(" from") + len(" from")
+    line = fromString[start:]
+    end = line.find(")")
+    line = line[:end]
+    line = line.strip()
+    return line
 
 
 '''
@@ -65,7 +83,43 @@ Parameters: str
 Returns: list of strs
 '''
 def findHashtags(message):
-    return
+    ind = []
+    lst = [ ]
+    for i in range(len(message)):
+        if message[i] == "#":
+            ind.append(i)
+    sls = []
+    prt=[]
+    for j in range(97, 123):
+        sls.append(chr(j))
+    for j in range(48, 58):
+        sls.append(chr(j))
+    for j in range(65, 90):
+        sls.append(chr(j))
+    sls.append("#")
+    for j in range(len(ind)):
+        line = message[ind[j]:]
+        end = line.find(" ")
+        line = line[:end]
+        a = len(line)
+        if end == -1:
+            line = message[ind[j]:]
+        for i in range(len(line)):
+            if line[i] not in sls:
+                line=line[0:i]
+                break
+        count = 0
+        for i in line:
+            if i == "#":
+                count = count + 1
+        if count > 1:
+            line = message[ind[j] + 1:]
+            end1 = line.find("#")
+            line = "#" + line[:end1]
+            count=0
+
+        lst.append(str(line))
+    return lst
 
 
 '''
@@ -75,7 +129,7 @@ Parameters: dataframe ; str
 Returns: str
 '''
 def getRegionFromState(stateDf, state):
-    return
+    return(stateDf.loc[stateDf['state'] == state, 'region'].iloc[0])
 
 
 '''
@@ -85,6 +139,32 @@ Parameters: dataframe ; dataframe
 Returns: None
 '''
 def addColumns(data, stateDf):
+    name=[]
+    position=[]
+    state=[]
+    hashtags=[]
+    region=[]
+    for i in range(len(data)):
+        st=data['label'][i]
+        A=parseName(st)
+        name.append(A)
+        B=parsePosition(st)
+        position.append(B)
+        C=parseState(st)
+        state.append(C)
+        st1=data['text'][i]
+        D=findHashtags(st1)
+        hashtags.append(D)
+
+    for i in range(len(state)):
+        E=getRegionFromState(stateDf,state[i])
+        region.append(E)
+
+    data['name']=name
+    data['position']=position
+    data['state']=state
+    data['region']=region
+    data['hashtags']=hashtags
     return
 
 
@@ -98,7 +178,13 @@ Returns: str
 '''
 def findSentiment(classifier, message):
     score = classifier.polarity_scores(message)['compound']
-    return
+    if score < -0.1:
+        return "negative"
+    elif score > 0.1:
+        return "positive"
+    else:
+        return "neutral"
+    
 
 
 '''
@@ -109,7 +195,15 @@ Returns: None
 '''
 def addSentimentColumn(data):
     classifier = SentimentIntensityAnalyzer()
+    sentiment=[]
+    for i in range(len(data)):
+        st=data['text'][i]
+        A=findSentiment(classifier, st)
+        sentiment.append(A)      
+    data['sentiment'] = sentiment
     return
+    
+        
 
 
 '''
@@ -119,8 +213,59 @@ Parameters: dataframe ; str ; str
 Returns: dict mapping strs to ints
 '''
 def getDataCountByState(data, colName, dataToCount):
-    return
-
+    st1=[]
+    st2=[]
+    dtc=[]
+    dd=[]
+    if colName!="" and dataToCount!="":
+        for i in range(len(data)):
+            st=data['state'][i]
+            st1.append(st)
+            dt=data[colName][i]
+            dtc.append(dt)
+            if st not in st2:
+                st2.append(st) #all unique names of states
+        for i in range(len(st2)):
+            A=st2[i]
+            count=0
+            for j in range(len(st1)):
+                if A==st1[j]:
+                    if dtc[j]==dataToCount:
+                        count=count+1
+            dd.append(count)            
+        sta=[]
+        cnt=[]
+        for i in range(len(dd)):
+            if dd[i]!=0:
+                sta.append(st2[i])
+                cnt.append(dd[i])
+        dic = {}
+        for i in range(0,len(sta)):
+            dic[sta[i]] = cnt[i]
+        return dic
+    else:
+        for i in range(len(data)):
+            st=data['state'][i]
+            st1.append(st)
+            if st not in st2:
+                st2.append(st) #all unique names of states
+        for i in range(len(st2)):
+            A=st2[i]
+            count=0
+            for j in range(len(st1)):
+                if A==st1[j]:
+                    count=count+1
+            dd.append(count)
+        sta=[]
+        cnt=[]
+        for i in range(len(dd)):
+            if dd[i]!=0:
+                sta.append(st2[i])
+                cnt.append(dd[i])
+        dic = {}
+        for i in range(0,len(sta)):
+            dic[sta[i]] = cnt[i]
+        return dic
 
 '''
 getDataForRegion(data, colName)
@@ -129,7 +274,38 @@ Parameters: dataframe ; str
 Returns: dict mapping strs to (dicts mapping strs to ints)
 '''
 def getDataForRegion(data, colName):
-    return
+    reg=[]
+    cln1=[]
+    cln2=[]
+    reg2=[]
+    d1={}
+    for i in range(len(data)):
+            re=data['region'][i]
+            reg.append(re)
+            if re not in reg2:
+                reg2.append(re) #all unique names of regions           
+            cln=data[colName][i]
+            cln1.append(cln)
+            if cln not in cln2:
+                cln2.append(cln) #all unique names of colname attributes
+    for i in range(len(reg2)):
+        d1[reg2[i]]={}
+        for j in range(len(cln2)):
+            d1[reg2[i]][cln2[j]]=0
+    
+    for i in range(len(reg2)):
+        A=reg2[i]
+        for j in range(len(cln2)):
+            B=cln2[j]
+            count=0
+            for k in range(len(data)):
+                C=data['region'][k]
+                D=data[colName][k]
+                if A==C and B==D:
+                    count=count+1
+            d1[A][B] = count
+       
+    return d1
 
 
 '''
@@ -268,10 +444,10 @@ if __name__ == "__main__":
     test.runWeek1()
 
     ## Uncomment these for Week 2 ##
-    """print("\n" + "#"*15 + " WEEK 2 TESTS " +  "#" * 16 + "\n")
+    print("\n" + "#"*15 + " WEEK 2 TESTS " +  "#" * 16 + "\n")
     test.week2Tests()
     print("\n" + "#"*15 + " WEEK 2 OUTPUT " + "#" * 15 + "\n")
-    test.runWeek2()"""
+    test.runWeek2()
 
     ## Uncomment these for Week 3 ##
     """print("\n" + "#"*15 + " WEEK 3 OUTPUT " + "#" * 15 + "\n")
